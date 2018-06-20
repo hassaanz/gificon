@@ -8,3 +8,6 @@ This is an experiment to check if it is  plausible to have animated GIF as brows
 
 ### Limitations
 For  now, this would only work in modern browsers.
+
+
+### [DEMO]([https://hassaanz.github.io/gificon/index.html])
