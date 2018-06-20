@@ -10,6 +10,15 @@
   display: none;
 }
 
+.file-preview:empty::after {
+  display: none;
+}
+
+.file-preview::after {
+  text-align: center;
+  content: "Click on GIF to animate favicon"
+}
+
 .clear-button {
   position: absolute;
   top: 45px;
