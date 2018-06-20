@@ -2,18 +2,20 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <script type="text/javascript" src="gificon.js"></script>
+    <script type="text/javascript" src="gificonMain.js"></script>
     <script type="text/javascript" src="libgif.js"></script>
     <link rel="stylesheet" href="gificon.css" />
     <title>Gificon</title>
   </head>
   <body>
-    <p>
-      Upload GIF:
-    </p>
-    <div class="file-preview" ondrop="ondrop(event);">
+    <div class="container">
+      <p>
+        Upload GIF
+      </p>
       <!-- File Upload Preview Container -->
+      <div class="file-preview"></div>
+      <div class="clear-button"></div>
+      <input type="file" id="gificon" name="gificon" value="" accept="image/gif">
     </div>
-    <input type="file" id="gificon" name="gificon" value="" accept="image/gif">
   </body>
 </html>

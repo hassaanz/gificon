@@ -6,6 +6,16 @@ function clearNode(node) {
   }
 }
 
+function removeDragData(ev) {
+  if (ev.dataTransfer.items) {
+    // Use DataTransferItemList interface to remove the drag data
+    ev.dataTransfer.items.clear();
+  } else {
+    // Use DataTransfer interface to remove the drag data
+    ev.dataTransfer.clearData();
+  }
+}
+
 
 function changeFavicon(src) {
   const link = document.createElement('link');
@@ -21,26 +31,16 @@ function changeFavicon(src) {
 }
 
 function onReady() {
-
-
-  function getGifIconVals(rub) {
-    const TOTAL_FRAMES = 1024;
-    if (!rub) {
-      return;
-    }
-    const total = rub.get_length();
-    if (total > TOTAL_FRAMES) {
-
-    }
-  }
-
-  function onImageUpload(ev) {
-    if (!this.files.length) {
+  function onImageChange(ev, image) {
+    if ((!this && !this.files.length) && !image) {
       return;
     }
     let playing = false;
     const previewContainer = document.querySelector('.file-preview');
-    const uploaded = ev.target.files[0];
+    const uploaded = ev ? ev.target.files[0] : image;
+    if (!uploaded) {
+      return;
+    }
     const uploadedURL = window.URL.createObjectURL(uploaded);
     const imgPreview = document.createDocumentFragment();
     const img = document.createElement('img');
@@ -53,13 +53,16 @@ function onReady() {
       gif: img,
       loop_mode: true,
       auto_play: false,
-      progressbar_height: 0
-      // max_width: 32,
+      progressbar_height: 0,
+      max_width: 200,
     });
     console.log(rub);
     rub.pause();
     rub.load(function onGifLoad(imgEl, cvs) {
       function step() {
+        if (!previewContainer.children.length) {
+          playing =  false;
+        }
         rub.move_relative(1);
         const canvasScreenshotURI = canvas.toDataURL();
         changeFavicon(canvasScreenshotURI);
@@ -98,13 +101,20 @@ function onReady() {
       // If dropped items aren't files, reject them
       if (ev.dataTransfer.items[i].kind === 'file') {
         var file = ev.dataTransfer.items[i].getAsFile();
-        files.push(files);
+        files.push(file);
       }
     }
+    return files;
   }
 
   setTimeout(() => {
     const previewContainer = document.querySelector('.file-preview');
+    const fileUploader = document.querySelector('input#gificon');
+    const clearButton = document.querySelector('.clear-button');
+    clearButton.addEventListener('click', () => clearNode(previewContainer), false);
+    if (!previewContainer || !fileUploader) {
+      return;
+    }
     const defaultStyle = previewContainer.style;
     function onDragEnter() {
       previewContainer.style.opacity = 0.7;
@@ -118,23 +128,30 @@ function onReady() {
       ev.preventDefault();
       const files = getFilesFromDrop(ev);
       console.log(files);
+      const filteredFiles = files.filter(file => file.type === 'image/gif');
       // Pass event to removeDragData for cleanup
       removeDragData(ev)
+      previewContainer.style = defaultStyle;
+      if (filteredFiles.length) {
+        // set first gif as input field value
+        onImageChange.call(null, null, filteredFiles[0]);
+      }
     }
-    const fileUploader = document.querySelector('input#gificon');
     previewContainer.addEventListener('dragenter', onDragEnter, false);
     previewContainer.addEventListener('dragleave', onDragLeave, false);
-    previewContainer.addEventListener('ondrop', onDrop, false);
+    previewContainer.addEventListener('drop', onDrop, false);
     previewContainer.ondragover = (ev) => {
-
+      ev.preventDefault();
     }
+    // previewContainer.addEventListener('dragover', onDrop, false);
+
     previewContainer.addEventListener('click', () => {
-      if (fileUploader) {
+      if (fileUploader && !previewContainer.children.length) {
         fileUploader.click();
       }
     }, false);
     if (fileUploader) {
-      fileUploader.addEventListener('change', onImageUpload);
+      fileUploader.addEventListener('change', onImageChange);
     }
   }, 200);
 
