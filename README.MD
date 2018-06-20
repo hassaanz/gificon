@@ -10,4 +10,4 @@ This is an experiment to check if it is  plausible to have animated GIF as brows
 For  now, this would only work in modern browsers.
 
 
-### [DEMO]([https://hassaanz.github.io/gificon/index.html])
+See [Demo](https://hassaanz.github.io/gificon/index.html)
